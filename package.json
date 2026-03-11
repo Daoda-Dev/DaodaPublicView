@@ -1,0 +1,32 @@
+{
+  "name": "daodabeta",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^15.1.1",
+    "@react-native-community/datetimepicker": "8.4.4",
+    "@react-native-community/netinfo": "^12.0.1",
+    "@react-navigation/bottom-tabs": "^7.15.5",
+    "@react-navigation/native": "^7.1.33",
+    "@react-navigation/native-stack": "^7.14.4",
+    "expo": "54",
+    "expo-audio": "~1.1.1",
+    "expo-av": "~16.0.8",
+    "expo-location": "~19.0.8",
+    "expo-status-bar": "~55.0.4",
+    "expo-video": "~3.0.16",
+    "firebase": "^12.10.0",
+    "react": "19.2.0",
+    "react-native": "0.83.2",
+    "react-native-maps": "1.20.1",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0"
+  },
+  "private": true
+}
