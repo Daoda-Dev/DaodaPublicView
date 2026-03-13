@@ -16,59 +16,58 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-const handleLogin = async () => {
-  if (!email || !password) {
-    Alert.alert("Error", "Please enter email and password");
-    return;
-  }
-
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-
-    // Critical: always reload to get fresh emailVerified value
-    await user.reload();
-
-    if (user.emailVerified) {
-      Alert.alert("Welcome!", "You're logged in 🔥");
-      // Do NOT navigate manually — App.js onAuthStateChanged will show tabs
-    } else {
-      // Block access: sign them out immediately
-      await auth.signOut();
-
-      Alert.alert(
-        "Email not verified",
-        "You need to verify your email before using the app.\n\nCheck your inbox (including spam) and click the link we sent you.",
-        [
-          { text: "OK", style: "default" },
-        ]
-      );
-
-      navigation.replace("VerifyEmail");
-    }
-  } catch (error) {
-    let message = "Something went wrong. Try again.";
-
-    switch (error.code) {
-      case "auth/user-not-found":
-        message = "No account found with this email";
-        break;
-      case "auth/wrong-password":
-        message = "Incorrect password";
-        break;
-      case "auth/invalid-email":
-        message = "Invalid email format";
-        break;
-      case "auth/too-many-requests":
-        message = "Too many attempts. Try again later or reset password";
-        break;
-      default:
-        message = error.message;
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter email and password");
+      return;
     }
 
-    Alert.alert("Login Failed", message);
-  }
-};
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Super important: refresh the user object to get latest emailVerified status
+      await user.reload();
+
+      if (user.emailVerified) {
+        // Verified → App.js will show the tabs automatically
+        Alert.alert("Welcome back!", "You're logged in.");
+      } else {
+        // Not verified → kick them out and send to verification screen
+        await auth.signOut();
+
+        Alert.alert(
+          "Email not verified",
+          "You need to verify your email before using Daoda.\n\nCheck your inbox (and spam/junk folder) for the link we sent.",
+          [{ text: "OK", style: "default" }]
+        );
+
+        navigation.replace("VerifyEmail");
+      }
+    } catch (error) {
+      // Keep your nice specific error messages
+      let message = "Something went wrong. Try again.";
+
+      switch (error.code) {
+        case "auth/user-not-found":
+          message = "No account found with this email";
+          break;
+        case "auth/wrong-password":
+          message = "Incorrect password";
+          break;
+        case "auth/invalid-email":
+          message = "Invalid email format";
+          break;
+        case "auth/too-many-requests":
+          message = "Too many attempts. Try again later or reset your password";
+          break;
+        default:
+          message = error.message;
+      }
+
+      Alert.alert("Login Failed", message);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -100,7 +99,6 @@ const handleLogin = async () => {
 
       <TouchableOpacity
         onPress={() => {
-          // TODO: Implement password reset later
           Alert.alert("Coming soon", "Password reset feature coming in next update!");
         }}
       >
@@ -137,7 +135,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "red",
     fontWeight: "bold",
-    fontSize: 24, // slightly bigger for better look
+    fontSize: 24,
     marginBottom: 48,
   },
   input: {
